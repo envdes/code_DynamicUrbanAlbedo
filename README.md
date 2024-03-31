@@ -40,7 +40,7 @@ The standard source code comes from [CTSM](https://github.com/ESCOMP/CTSM), with
 
 - Add new name-list for initialization:
   
-  - [src/main/clm_instMod.F90](./1_code_modification/src/main/clm_instMod.F90))
+  - [src/main/clm_instMod.F90](./1_code_modification/src/main/clm_instMod.F90)
 
 ### [2_simulation_output_analysis]()
 
