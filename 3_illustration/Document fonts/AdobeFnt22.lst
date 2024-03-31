@@ -1,0 +1,103 @@
+%!Adobe-FontList 1.22
+%Locale:0x404
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:Invalid
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/AdobeFnt22.lst
+FileLength:2210
+FileModTime:733492900
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:Arial-BoldMT
+FamilyName:Arial
+StyleName:Bold
+MenuName:Arial
+StyleBits:2
+WeightClass:700
+WidthClass:5
+AngleClass:0
+FullName:Arial Bold
+WritingScript:Roman
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/Arial Bold.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:750984
+FileModTime:732694403
+NameArray:0,Mac,4,Arial Bold
+NameArray:0,Win,1,Arial
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:ArialMT
+FamilyName:Arial
+StyleName:Regular
+MenuName:Arial
+StyleBits:0
+WeightClass:400
+WidthClass:5
+AngleClass:0
+FullName:Arial
+WritingScript:Roman
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/Arial.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:773236
+FileModTime:732694403
+NameArray:0,Mac,4,Arial
+NameArray:0,Win,1,Arial
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:TimesNewRomanPS-BoldMT
+FamilyName:Times New Roman
+StyleName:Bold
+MenuName:Times New Roman
+StyleBits:2
+WeightClass:700
+WidthClass:5
+AngleClass:0
+FullName:Times New Roman Bold
+WritingScript:Roman
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/Times New Roman Bold.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:832472
+FileModTime:732694403
+NameArray:0,Mac,4,Times New Roman Bold
+NameArray:0,Win,1,Times New Roman
+%EndFont
+
+%BeginFont
+Handler:DirectoryHandler
+FontType:TrueType
+FontName:TimesNewRomanPS-ItalicMT
+FamilyName:Times New Roman
+StyleName:Italic
+MenuName:Times New Roman
+StyleBits:1
+WeightClass:400
+WidthClass:5
+AngleClass:1
+FullName:Times New Roman Italic
+WritingScript:Roman
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/Times New Roman Italic.ttf
+DataFormat:sfntData
+hasSVG:no
+VariableFontType:NonVariableFont
+FileLength:660268
+FileModTime:732694403
+NameArray:0,Mac,4,Times New Roman Italic
+NameArray:0,Win,1,Times New Roman
+%EndFont
+
