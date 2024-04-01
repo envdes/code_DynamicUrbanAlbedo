@@ -1,5 +1,7 @@
 # code_DynamicUrbanAlbedo
 
+[![DOI](https://zenodo.org/badge/770688781.svg)](https://zenodo.org/doi/10.5281/zenodo.10903399)
+
 ## Introduction
 
 This repository is supplementary to the manuscript "**Improving Urban Climate Adaptation Modelling in the Community Earth System Model (CESM) Through Transient Urban Surface Albedo Representation**".
