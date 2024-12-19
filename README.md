@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This repository is supplementary to the paper "**Improving Urban Climate Adaptation Modelling in the Community Earth System Model (CESM) Through Transient Urban Surface Albedo Representation**". 
+This repository is supplementary to the paper "Sun, Y., Fang, B., Oleson, K. W., Zhao, L., Topping, D. O., Schultz, D. M., & Zheng, Z. (2024). Improving Urban Climate Adaptation Modelling in the Community Earth System Model (CESM) Through Transient Urban Surface Albedo Representation. *Journal of Advances in Modeling Earth Systems*, *16*, e2024MS004380. https://doi.org/10.1029/2024MS004380". 
 
 The objectives of this project are:
 
