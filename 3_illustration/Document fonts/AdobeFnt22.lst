@@ -4,9 +4,9 @@
 %BeginFont
 Handler:DirectoryHandler
 FontType:Invalid
-OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/AdobeFnt22.lst
-FileLength:2210
-FileModTime:733492900
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/test_code_DynamicUrbanAlbedo/“20240618”文件夹/Document fonts/AdobeFnt22.lst
+FileLength:2226
+FileModTime:755957411
 %EndFont
 
 %BeginFont
@@ -22,12 +22,12 @@ WidthClass:5
 AngleClass:0
 FullName:Arial Bold
 WritingScript:Roman
-OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/Arial Bold.ttf
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/test_code_DynamicUrbanAlbedo/“20240618”文件夹/Document fonts/Arial Bold.ttf
 DataFormat:sfntData
 hasSVG:no
 VariableFontType:NonVariableFont
 FileLength:750984
-FileModTime:732694403
+FileModTime:750684165
 NameArray:0,Mac,4,Arial Bold
 NameArray:0,Win,1,Arial
 %EndFont
@@ -45,12 +45,12 @@ WidthClass:5
 AngleClass:0
 FullName:Arial
 WritingScript:Roman
-OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/Arial.ttf
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/test_code_DynamicUrbanAlbedo/“20240618”文件夹/Document fonts/Arial.ttf
 DataFormat:sfntData
 hasSVG:no
 VariableFontType:NonVariableFont
 FileLength:773236
-FileModTime:732694403
+FileModTime:750684165
 NameArray:0,Mac,4,Arial
 NameArray:0,Win,1,Arial
 %EndFont
@@ -68,12 +68,12 @@ WidthClass:5
 AngleClass:0
 FullName:Times New Roman Bold
 WritingScript:Roman
-OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/Times New Roman Bold.ttf
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/test_code_DynamicUrbanAlbedo/“20240618”文件夹/Document fonts/Times New Roman Bold.ttf
 DataFormat:sfntData
 hasSVG:no
 VariableFontType:NonVariableFont
 FileLength:832472
-FileModTime:732694403
+FileModTime:750684165
 NameArray:0,Mac,4,Times New Roman Bold
 NameArray:0,Win,1,Times New Roman
 %EndFont
@@ -91,12 +91,12 @@ WidthClass:5
 AngleClass:1
 FullName:Times New Roman Italic
 WritingScript:Roman
-OutlineFileName:/Users/user/Desktop/YuanSun-UoM/CESM_DynamicAlbedo_DataAnalysis/suppliment_graph/Document fonts/Times New Roman Italic.ttf
+OutlineFileName:/Users/user/Desktop/YuanSun-UoM/test_code_DynamicUrbanAlbedo/“20240618”文件夹/Document fonts/Times New Roman Italic.ttf
 DataFormat:sfntData
 hasSVG:no
 VariableFontType:NonVariableFont
 FileLength:660268
-FileModTime:732694403
+FileModTime:750684165
 NameArray:0,Mac,4,Times New Roman Italic
 NameArray:0,Win,1,Times New Roman
 %EndFont
