@@ -1054,7 +1054,7 @@ contains
                   filter_inactive_and_active(nc)%num_urbanp, &
                   filter_inactive_and_active(nc)%urbanp,     &        
                   waterstate_inst, urbanparams_inst,         &
-                  solarabs_inst, surfalb_inst)
+                  solarabs_inst, surfalb_inst, urbanalbtv_inst)
              call t_stopf('urbalb')
           end if
 

@@ -21,7 +21,8 @@ module UrbanAlbedoMod
   use SurfaceAlbedoType , only : surfalb_type
   use LandunitType      , only : lun                
   use ColumnType        , only : col                
-  use PatchType         , only : patch                
+  use PatchType         , only : patch 
+  use UrbanDynAlbMod    , only : urbanalbtv_type                
   !
   ! !PUBLIC TYPES:
   implicit none
@@ -46,7 +47,7 @@ contains
   !-----------------------------------------------------------------------
   subroutine UrbanAlbedo (bounds, num_urbanl, filter_urbanl, &
        num_urbanc, filter_urbanc, num_urbanp, filter_urbanp, &
-       waterstate_inst, urbanparams_inst, solarabs_inst, surfalb_inst) 
+       waterstate_inst, urbanparams_inst, solarabs_inst, surfalb_inst, urbanalbtv_inst) 
     !
     ! !DESCRIPTION: 
     ! Determine urban landunit component albedos
@@ -61,6 +62,7 @@ contains
     use clm_varcon    , only : sb
     use column_varcon , only : icol_roof, icol_sunwall, icol_shadewall
     use column_varcon , only : icol_road_perv, icol_road_imperv
+    use clm_varctl    , only : Dynamic_UrbanAlbedoRoof, Dynamic_UrbanAlbedoImproad, Dynamic_UrbanAlbedoWall
     !
     ! !ARGUMENTS:
     type(bounds_type)      , intent(in)    :: bounds  
@@ -74,6 +76,7 @@ contains
     type(urbanparams_type) , intent(inout) :: urbanparams_inst
     type(solarabs_type)    , intent(inout) :: solarabs_inst
     type(surfalb_type)     , intent(inout) :: surfalb_inst
+    type(urbanalbtv_type)  , intent(in) :: urbanalbtv_inst
     !
     ! !LOCAL VARIABLES:
     integer  :: fl,fp,fc,g,l,p,c,ib                                  ! indices
@@ -110,9 +113,14 @@ contains
     real(r8) :: sref_improad_dir   (bounds%begl:bounds%endl, numrad) ! direct  solar reflected by impervious road per unit ground area per unit incident flux   
     real(r8) :: sref_improad_dif   (bounds%begl:bounds%endl, numrad) ! diffuse solar reflected by impervious road per unit ground area per unit incident flux   
     real(r8) :: sref_perroad_dir   (bounds%begl:bounds%endl, numrad) ! direct  solar reflected by pervious road per unit ground area per unit incident flux   
-    real(r8) :: sref_perroad_dif   (bounds%begl:bounds%endl, numrad) ! diffuse solar reflected by pervious road per unit ground area per unit incident flux   
+    real(r8) :: sref_perroad_dif   (bounds%begl:bounds%endl, numrad) ! diffuse solar reflected by pervious road per unit ground area per unit incident flux
+    real(r8) :: alb_roof_dir (bounds%begl:bounds%endl, numrad)
+    real(r8) :: alb_roof_dif (bounds%begl:bounds%endl, numrad)
+    real(r8) :: alb_wall_dir (bounds%begl:bounds%endl, numrad)
+    real(r8) :: alb_wall_dif (bounds%begl:bounds%endl, numrad)
+    real(r8) :: alb_improad_dir (bounds%begl:bounds%endl, numrad)
+    real(r8) :: alb_improad_dif (bounds%begl:bounds%endl, numrad)
     !-----------------------------------------------------------------------
-
     associate(                                                        &
          ctype              => col%itype                            , & ! Input:  [integer (:)    ]  column type                                        
          coli               => lun%coli                             , & ! Input:  [integer (:)    ]  beginning column index for landunit                
@@ -120,16 +128,21 @@ contains
          wtroad_perv        => lun%wtroad_perv                      , & ! Input:  [real(r8) (:)   ]  weight of pervious road wrt total road            
          
          frac_sno           => waterstate_inst%frac_sno_col         , & ! Input:  [real(r8) (:)   ]  fraction of ground covered by snow (0 to 1)       
-         
-         alb_roof_dir       => urbanparams_inst%alb_roof_dir        , & ! Output: [real(r8) (:,:) ]  direct roof albedo                              
-         alb_roof_dif       => urbanparams_inst%alb_roof_dif        , & ! Output: [real(r8) (:,:) ]  diffuse roof albedo                             
-         alb_improad_dir    => urbanparams_inst%alb_improad_dir     , & ! Output: [real(r8) (:,:) ]  direct impervious road albedo                   
-         alb_improad_dif    => urbanparams_inst%alb_improad_dif     , & ! Output: [real(r8) (:,:) ]  diffuse imprevious road albedo                  
-         alb_perroad_dir    => urbanparams_inst%alb_perroad_dir     , & ! Output: [real(r8) (:,:) ]  direct pervious road albedo                     
-         alb_perroad_dif    => urbanparams_inst%alb_perroad_dif     , & ! Output: [real(r8) (:,:) ]  diffuse pervious road albedo                    
-         alb_wall_dir       => urbanparams_inst%alb_wall_dir        , & ! Output: [real(r8) (:,:) ]  direct wall albedo                              
-         alb_wall_dif       => urbanparams_inst%alb_wall_dif        , & ! Output: [real(r8) (:,:) ]  diffuse wall albedo                             
-        
+                     
+         alb_perroad_dir    => urbanparams_inst%alb_perroad_dir     , & ! Input: [real(r8) (:,:) ]  direct pervious road albedo                     
+         alb_perroad_dif    => urbanparams_inst%alb_perroad_dif     , & ! Input: [real(r8) (:,:) ]  diffuse pervious road albedo  
+         con_alb_roof_dir   => urbanparams_inst%alb_roof_dir        , &         ! Input: [real(r8) (:,:) ]  direct roof albedo                              
+         con_alb_roof_dif   => urbanparams_inst%alb_roof_dif        , &                                      
+         con_alb_wall_dir   => urbanparams_inst%alb_wall_dir        , &    ! Input: [real(r8) (:,:) ]  direct wall albedo                   
+         con_alb_wall_dif   => urbanparams_inst%alb_wall_dif        , &
+         con_alb_improad_dif   => urbanparams_inst%alb_improad_dif        , &
+         con_alb_improad_dir   => urbanparams_inst%alb_improad_dir        , &
+         dyn_alb_roof_dir       => urbanalbtv_inst%dyn_alb_roof_dir  ,&       ! Output: [real(r8) (:,:) ]  direct roof albedo                              
+         dyn_alb_roof_dif       => urbanalbtv_inst%dyn_alb_roof_dif  ,&
+         dyn_alb_improad_dir    => urbanalbtv_inst%dyn_alb_improad_dir , &      ! Output: [real(r8) (:,:) ]  direct improad albedo                              
+         dyn_alb_improad_dif    => urbanalbtv_inst%dyn_alb_improad_dif  , &
+         dyn_alb_wall_dir       => urbanalbtv_inst%dyn_alb_wall_dir   , &     ! Output: [real(r8) (:,:) ]  direct roof albedo                              
+         dyn_alb_wall_dif       => urbanalbtv_inst%dyn_alb_wall_dif  , &
          sabs_roof_dir      => solarabs_inst%sabs_roof_dir_lun      , & ! Output: [real(r8) (:,:) ]  direct  solar absorbed  by roof per unit ground area per unit incident flux
          sabs_roof_dif      => solarabs_inst%sabs_roof_dif_lun      , & ! Output: [real(r8) (:,:) ]  diffuse solar absorbed  by roof per unit ground area per unit incident flux
          sabs_sunwall_dir   => solarabs_inst%sabs_sunwall_dir_lun   , & ! Output: [real(r8) (:,:) ]  direct  solar absorbed  by sunwall per unit wall area per unit incident flux
@@ -165,7 +178,35 @@ contains
       ! Solar declination and cosine solar zenith angle and zenith angle for 
       ! next time step
       ! ----------------------------------------------------------------------------
-      
+      do ib = 1, numrad
+         do fl = 1,num_urbanl
+            l = filter_urbanl(fl)
+            if (.not. Dynamic_UrbanAlbedoRoof) then
+               alb_roof_dir(l,ib) = con_alb_roof_dir(l,ib)
+               alb_roof_dif(l,ib) = con_alb_roof_dif(l,ib)
+            else
+               alb_roof_dir(l,ib) = dyn_alb_roof_dir(l,ib)
+               alb_roof_dif(l,ib) = dyn_alb_roof_dif(l,ib)   
+            end if
+            
+            if (.not. Dynamic_UrbanAlbedoWall) then
+               alb_wall_dir(l,ib) = con_alb_wall_dir(l,ib)
+               alb_wall_dif(l,ib) = con_alb_wall_dif(l,ib)
+            else
+               alb_wall_dir(l,ib) = dyn_alb_wall_dir(l,ib)
+               alb_wall_dif(l,ib) = dyn_alb_wall_dif(l,ib)   
+            end if
+            
+            if (.not. Dynamic_UrbanAlbedoImproad) then
+               alb_improad_dir(l,ib) = con_alb_improad_dir(l,ib)
+               alb_improad_dif(l,ib) = con_alb_improad_dif(l,ib)
+            else
+               alb_improad_dir(l,ib) = dyn_alb_improad_dir(l,ib)
+               alb_improad_dif(l,ib) = dyn_alb_improad_dif(l,ib)   
+            end if 
+         end do
+      end do
+           
       do fl = 1,num_urbanl
          l = filter_urbanl(fl)
          g = lun%gridcell(l)
@@ -332,16 +373,16 @@ contains
             do fc = 1,num_urbanc
                c = filter_urbanc(fc)
                l = col%landunit(c)
-               if (ctype(c) == icol_roof) then    
+               if (ctype(c) == icol_roof) then  
                   alb_roof_dir_s(l,ib) = alb_roof_dir(l,ib)*(1._r8-frac_sno(c))  &
                        + albsnd_roof(l,ib)*frac_sno(c)
                   alb_roof_dif_s(l,ib) = alb_roof_dif(l,ib)*(1._r8-frac_sno(c))  &
-                       + albsni_roof(l,ib)*frac_sno(c)
-               else if (ctype(c) == icol_road_imperv) then    
+                       + albsni_roof(l,ib)*frac_sno(c)        
+               else if (ctype(c) == icol_road_imperv) then 
                   alb_improad_dir_s(l,ib) = alb_improad_dir(l,ib)*(1._r8-frac_sno(c))  &
                        + albsnd_improad(l,ib)*frac_sno(c)
-                  alb_improad_dif_s(l,ib) = alb_improad_dif(l,ib)*(1._r8-frac_sno(c))  &
-                       + albsni_improad(l,ib)*frac_sno(c)
+                     alb_improad_dif_s(l,ib) = alb_improad_dif(l,ib)*(1._r8-frac_sno(c))  &
+                       + albsni_improad(l,ib)*frac_sno(c)             
                else if (ctype(c) == icol_road_perv) then    
                   alb_perroad_dir_s(l,ib) = alb_perroad_dir(l,ib)*(1._r8-frac_sno(c))  &
                        + albsnd_perroad(l,ib)*frac_sno(c)

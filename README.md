@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This repository is supplementary to the paper "Sun, Y., Fang, B., Oleson, K. W., Zhao, L., Topping, D. O., Schultz, D. M., & Zheng, Z. (2024). Improving Urban Climate Adaptation Modelling in the Community Earth System Model (CESM) Through Transient Urban Surface Albedo Representation. *Journal of Advances in Modeling Earth Systems*, *16*, e2024MS004380. https://doi.org/10.1029/2024MS004380". 
+This repository is supplementary to the paper "Sun, Y., Fang, B., Oleson, K. W., Zhao, L., Topping, D. O., Schultz, D. M., & Zheng, Z. (2024). Improving Urban Climate Adaptation Modelling in the Community Earth System Model (CESM) Through Transient Urban Surface Albedo Representation. *Journal of Advances in Modeling Earth Systems*, 16(12), e2024MS004380. https://doi.org/10.1029/2024MS004380". 
 
 The objectives of this project are:
 
@@ -16,7 +16,7 @@ The objectives of this project are:
 
 ### [1_code_modification](./1_code_modification)
 
-The standard source code comes from [CTSM](https://github.com/ESCOMP/CTSM), with the release tag: **[clm5.0.30](https://github.com/ESCOMP/CTSM/releases/tag/release-clm5.0.30)**.
+The standard source code comes from [CTSM](https://github.com/ESCOMP/CTSM), with the release tag: [clm5.0.30](https://github.com/ESCOMP/CTSM/releases/tag/release-clm5.0.30).
 
 - Create a new F90 file:
   
@@ -28,23 +28,23 @@ The standard source code comes from [CTSM](https://github.com/ESCOMP/CTSM), with
   
   - [src/biogeophys/UrbanParamsType.F90](./1_code_modification/src/biogeophys/UrbanParamsType.F90)
 
-- Add new name-list for case run:
+- Add new namelist for case run:
   
   - [src/main/clm_varctl.F90](./1_code_modification/src/main/clm_varctl.F90)
   - [src/main/controlMod.F90](./1_code_modification/src/main/controlMod.F90)
   - [src/main/clm_driver.F90](./1_code_modification/src/main/clm_driver.F90)
 
-- Add new name-list for case build:
+- Add new namelist for case build:
   
   - [bld/CLMBuildNamelist.pm](./1_code_modification/src/bld/CLMBuildNamelist.pm)
   - [bld/namelist_files/namelist_defaults_clm4_5.xml](./1_code_modification/src/bld/namelist_defaults_clm4_5.xml)
   - [bld/namelist_files/namelist_definition_clm4_5.xml](./1_code_modification/src/bld/namelist_definition_clm4_5.xml)
 
-- Add new name-list for initialization:
+- Add new namelist for initialization:
   
   - [src/main/clm_instMod.F90](./1_code_modification/src/main/clm_instMod.F90)
 
-### [2_simulation_output_analysis]()
+### [2_simulation_output_analysis](./2_simulation_output_analysis)
 
 The scripts listed below are used for processing simulation output and visualization.
 
@@ -61,7 +61,7 @@ The scripts listed below are used for processing simulation output and visualiza
 
 ### [3_illustration](./3_illutration)
 
-The figures listed below are used to illustrate details of the transient urban albedo scheme in CLMU.
+The figures listed below illustrate details of the transient urban albedo scheme in CLMU.
 
 | Subject                                                      | Visualization                                 |
 | ------------------------------------------------------------ | --------------------------------------------- |
@@ -73,7 +73,7 @@ The figures listed below are used to illustrate details of the transient urban a
 
 ### [4_supplimentary_information](./4_supplimentary_information)
 
-The scripts listed below are used to show supplementary information such as input data, atmosphere variables, and computational performance.
+The scripts listed below show supplementary information such as input data, atmosphere variables, and computational performance.
 
 | Num. | Subject                                                      | Analysis                                                     | Visualization                                                |
 | ---- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |

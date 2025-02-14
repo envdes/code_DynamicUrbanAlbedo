@@ -11,8 +11,7 @@ module UrbanParamsType
   use clm_varctl   , only : iulog, fsurdat
   use clm_varctl   , only : Dynamic_UrbanAlbedoRoof, Dynamic_UrbanAlbedoImproad, Dynamic_UrbanAlbedoWall
   use clm_varcon   , only : namel, grlnd, spval
-  use LandunitType , only : lun  
-  use UrbanDynAlbMod  , only : urbanalbtv_type            
+  use LandunitType , only : lun              
   ! 
   implicit none
   save
@@ -26,8 +25,6 @@ module UrbanParamsType
   public  :: IsProgBuildTemp   ! If using the prognostic building temperature method
   ! 
   ! !PRIVATE TYPE
-  type(urbanalbtv_type)  , public :: urbanalbtv_inst
-  
   type urbinp_type
      real(r8), pointer :: canyon_hwr      (:,:)  
      real(r8), pointer :: wtlunit_roof    (:,:)  
@@ -164,12 +161,7 @@ contains
     begl = bounds%begl; endl = bounds%endl
     begg = bounds%begg; endg = bounds%endg
 
-    ! Allocate urbanparams data structure
-    if((Dynamic_UrbanAlbedoRoof) .or. (Dynamic_UrbanAlbedoImproad) &
-      .or. (Dynamic_UrbanAlbedoWall)) then
-      call urbanalbtv_inst%Init(bounds)
-    end if
-      
+    ! Allocate urbanparams data structure  
     if ( nlevurb > 0 )then
        allocate(this%tk_wall          (begl:endl,nlevurb))  ; this%tk_wall             (:,:) = nan
        allocate(this%tk_roof          (begl:endl,nlevurb))  ; this%tk_roof             (:,:) = nan
@@ -221,13 +213,6 @@ contains
                 this%alb_roof_dir   (l,ib) = urbinp%alb_roof_dir   (g,dindx,ib)
                 this%alb_roof_dif   (l,ib) = urbinp%alb_roof_dif   (g,dindx,ib)
              end do
-          else
-             if (Dynamic_UrbanAlbedoRoof) then  
-                do ib = 1,numrad             
-                  this%alb_roof_dir   (l,ib) = urbanalbtv_inst%dyn_alb_roof_dir   (l)
-                  this%alb_roof_dif   (l,ib) = urbanalbtv_inst%dyn_alb_roof_dif   (l)
-                end do   
-             end if
           end if
           
           if (.not. Dynamic_UrbanAlbedoImproad) then
@@ -235,13 +220,6 @@ contains
                 this%alb_improad_dir   (l,ib) = urbinp%alb_improad_dir   (g,dindx,ib)
                 this%alb_improad_dif   (l,ib) = urbinp%alb_improad_dif   (g,dindx,ib)
              end do
-          else
-             if (Dynamic_UrbanAlbedoImproad) then  
-                do ib = 1,numrad             
-                  this%alb_improad_dir   (l,ib) = urbanalbtv_inst%dyn_alb_improad_dir   (l)
-                  this%alb_improad_dif   (l,ib) = urbanalbtv_inst%dyn_alb_improad_dif   (l)
-                end do
-             end if
           end if
            
            if (.not. Dynamic_UrbanAlbedoWall) then
@@ -249,13 +227,6 @@ contains
                 this%alb_wall_dir   (l,ib) = urbinp%alb_wall_dir   (g,dindx,ib)
                 this%alb_wall_dif   (l,ib) = urbinp%alb_wall_dif   (g,dindx,ib)
              end do
-          else
-             if (Dynamic_UrbanAlbedoWall) then  
-                do ib = 1,numrad             
-                  this%alb_wall_dir   (l,ib) = urbanalbtv_inst%dyn_alb_wall_dir   (l)
-                  this%alb_wall_dif   (l,ib) = urbanalbtv_inst%dyn_alb_wall_dif   (l)
-                end do
-             end if
           end if
                 
           this%em_roof   (l) = urbinp%em_roof   (g,dindx)
@@ -408,42 +379,6 @@ contains
     ! Deallocate memory for urbinp datatype
     
     call UrbanInput(bounds%begg, bounds%endg, mode='finalize')
-    
-    if (Dynamic_UrbanAlbedoRoof) then
-    ! Add history fields
-       call hist_addfld1d (fname='DYNALB_ROOF_DIR', units='',      &
-            avgflag='A', long_name='time varing urban roof albedo dir',   &
-            ptr_lunit=urbanalbtv_inst%dyn_alb_roof_dir, default='inactive', set_nourb=spval, &
-            l2g_scale_type='unity')
-       call hist_addfld1d (fname='DYNALB_ROOF_DIF', units='',      &
-            avgflag='A', long_name='time varing urban roof albedo dif',   &
-            ptr_lunit=urbanalbtv_inst%dyn_alb_roof_dir, default='inactive', set_nourb=spval, &
-            l2g_scale_type='unity')
-    end if        
-    
-    if (Dynamic_UrbanAlbedoImproad) then
-    ! Add history fields
-       call hist_addfld1d (fname='DYNALB_IMPROAD_DIR', units='',      &
-            avgflag='A', long_name='time varing urban improad albedo dir',   &
-            ptr_lunit=urbanalbtv_inst%dyn_alb_roof_dir, default='inactive', set_nourb=spval, &
-            l2g_scale_type='unity')
-       call hist_addfld1d (fname='DYNALB_IMPROAD_DIF', units='',      &
-            avgflag='A', long_name='time varing urban improad albedo dif',   &
-            ptr_lunit=urbanalbtv_inst%dyn_alb_roof_dir, default='inactive', set_nourb=spval, &
-            l2g_scale_type='unity')
-    end if
-    
-    if (Dynamic_UrbanAlbedoWall) then
-    ! Add history fields
-       call hist_addfld1d (fname='DYNALB_WALL_DIR', units='',      &
-            avgflag='A', long_name='time varing urban wall albedo dir',   &
-            ptr_lunit=urbanalbtv_inst%dyn_alb_roof_dir, default='inactive', set_nourb=spval, &
-            l2g_scale_type='unity')
-       call hist_addfld1d (fname='DYNALB_WALL_DIF', units='',      &
-            avgflag='A', long_name='time varing urban wall albedo dif',   &
-            ptr_lunit=urbanalbtv_inst%dyn_alb_roof_dir, default='inactive', set_nourb=spval, &
-            l2g_scale_type='unity')
-    end if
   end subroutine Init
 
   !-----------------------------------------------------------------------

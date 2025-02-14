@@ -14,19 +14,23 @@ module clm_instMod
   use landunit_varcon , only : istice_mec, istsoil
   use perf_mod        , only : t_startf, t_stopf
   use controlMod      , only : NLFilename
+  use clm_varctl      , only : Dynamic_UrbanAlbedoRoof, Dynamic_UrbanAlbedoImproad, Dynamic_UrbanAlbedoWall
 
   !-----------------------------------------
   ! Constants
   !-----------------------------------------
-
-  use UrbanDynAlbMod                     , only : urbanalbtv_type  
+ 
   use UrbanParamsType                    , only : urbanparams_type   
   use UrbanParamsType                    , only : IsSimpleBuildTemp, IsProgBuildTemp
   use UrbanTimeVarType                   , only : urbantv_type
   use SoilBiogeochemDecompCascadeConType , only : decomp_cascade_con
   use CNDVType                           , only : dgv_ecophyscon     ! Constants 
-
-
+  
+  !-----------------------------------------
+  ! Time Varying
+  !-----------------------------------------
+  use UrbanDynAlbMod                     , only : urbanalbtv_type 
+  
   !-----------------------------------------
   ! Definition of component types 
   !-----------------------------------------
@@ -241,7 +245,9 @@ contains
     end do
 
     ! Initialize urban time varying albedo
-    call urbanalbtv_inst%Init(bounds)
+    if (Dynamic_UrbanAlbedoRoof .or. Dynamic_UrbanAlbedoWall .or. Dynamic_UrbanAlbedoImproad) then
+       call urbanalbtv_inst%dynAlbinit(bounds)
+    end if
     
     ! Initialize urban constants
     call urbanparams_inst%Init(bounds)

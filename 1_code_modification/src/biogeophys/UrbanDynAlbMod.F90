@@ -15,20 +15,24 @@ module UrbanDynAlbMod
  use GridcellType    , only : grc
  use mct_mod
  use landunit_varcon , only : isturb_MIN, isturb_MAX         ! isturb_MIN = 7, isturb_MAX = 9
+ use clm_varctl      , only : Dynamic_UrbanAlbedoRoof, Dynamic_UrbanAlbedoImproad, Dynamic_UrbanAlbedoWall
+ use clm_varpar      , only : numrad
  ! 
  implicit none
  save
  private
  
+ public dynAlbinit  ! initialize transient urban albedo
+ 
  ! !PUBLIC TYPE
  type, public :: urbanalbtv_type
     ! urban roof albedo inputs
-    real(r8), public, pointer :: dyn_alb_roof_dir        (:) ! dynamic lun direct  roof albedo
-    real(r8), public, pointer :: dyn_alb_roof_dif        (:) ! dynamic lun diffuse roof albedo
-    real(r8), public, pointer :: dyn_alb_improad_dir     (:) ! dynamic lun direct roof albedo
-    real(r8), public, pointer :: dyn_alb_improad_dif     (:) ! dynamic lun diffuse roof albedo
-    real(r8), public, pointer :: dyn_alb_wall_dir        (:) ! dynamic lun direct wall albedo
-    real(r8), public, pointer :: dyn_alb_wall_dif        (:) ! dynamic lun diffuse wall albedo
+    real(r8), public, pointer :: dyn_alb_roof_dir        (:,:) ! dynamic lun direct  roof albedo
+    real(r8), public, pointer :: dyn_alb_roof_dif        (:,:) ! dynamic lun diffuse roof albedo
+    real(r8), public, pointer :: dyn_alb_improad_dir     (:,:) ! dynamic lun direct roof albedo
+    real(r8), public, pointer :: dyn_alb_improad_dif     (:,:) ! dynamic lun diffuse roof albedo
+    real(r8), public, pointer :: dyn_alb_wall_dir        (:,:) ! dynamic lun direct wall albedo
+    real(r8), public, pointer :: dyn_alb_wall_dif        (:,:) ! dynamic lun diffuse wall albedo
     ! 
     type(shr_strdata_type)    :: sdat_urbanalbtvroof         ! urban time varying roof albedo data stream
     type(shr_strdata_type)    :: sdat_urbanalbtvimproad      ! urban time varying improad albedo data stream
@@ -36,7 +40,7 @@ module UrbanDynAlbMod
     
    contains
      ! !PUBLIC MEMBER FUNCTIONS:
-     procedure, public :: Init                               ! Allocate and initialize urbanalbtv
+     procedure, public :: dynAlbinit                         ! Allocate and initialize urbanalbtv
      procedure, public :: urbanalbtvroof_init                ! Initialize urban roof albedo time varying stream
      procedure, public :: urbanalbtvroof_interp              ! Interpolate urban roof alebdo time varying stream
      procedure, public :: urbanalbtvimproad_init             ! Initialize urban improad albedo time varying stream
@@ -54,11 +58,12 @@ module UrbanDynAlbMod
   !----------------------------------------------------------------------- 
  contains
   !-----------------------------------------------------------------------
-  subroutine Init(this, bounds)
+  subroutine dynAlbinit(this, bounds)
   ! !DESCRIPTION:
   ! Initialize data stream information for dynamic urban albedo
   ! !USES:
   use shr_infnan_mod  , only : nan => shr_infnan_nan, assignment(=)
+  use histFileMod     , only : hist_addfld2d
   ! !ARGUMENTS:
   class(urbanalbtv_type)                 :: this
   type(bounds_type)      , intent(in)    :: bounds
@@ -69,21 +74,53 @@ module UrbanDynAlbMod
   ! 
   ! Allocate urbanalbtv data structures
   ! 
-  allocate(this%dyn_alb_roof_dir        (begl:endl))   ; this%dyn_alb_roof_dir        (:) = nan
-  allocate(this%dyn_alb_roof_dif        (begl:endl))   ; this%dyn_alb_roof_dif        (:) = nan 
-  allocate(this%dyn_alb_improad_dir     (begl:endl))   ; this%dyn_alb_improad_dir     (:) = nan   
-  allocate(this%dyn_alb_improad_dif     (begl:endl))   ; this%dyn_alb_improad_dif     (:) = nan
-  allocate(this%dyn_alb_wall_dir        (begl:endl))   ; this%dyn_alb_wall_dir        (:) = nan   
-  allocate(this%dyn_alb_wall_dif        (begl:endl))   ; this%dyn_alb_wall_dif        (:) = nan
-  ! 
-  call this%urbanalbtvroof_init(bounds)
-  call this%urbanalbtvroof_interp(bounds)
-  call this%urbanalbtvimproad_init(bounds)
-  call this%urbanalbtvimproad_interp(bounds)
-  call this%urbanalbtvwall_init(bounds)
-  call this%urbanalbtvwall_interp(bounds)
-  ! 
- end subroutine Init
+  allocate(this%dyn_alb_roof_dir        (begl:endl,numrad))   ; this%dyn_alb_roof_dir        (:,:) = nan
+  allocate(this%dyn_alb_roof_dif        (begl:endl,numrad))   ; this%dyn_alb_roof_dif        (:,:) = nan 
+  allocate(this%dyn_alb_improad_dir     (begl:endl,numrad))   ; this%dyn_alb_improad_dir     (:,:) = nan   
+  allocate(this%dyn_alb_improad_dif     (begl:endl,numrad))   ; this%dyn_alb_improad_dif     (:,:) = nan
+  allocate(this%dyn_alb_wall_dir        (begl:endl,numrad))   ; this%dyn_alb_wall_dir        (:,:) = nan   
+  allocate(this%dyn_alb_wall_dif        (begl:endl,numrad))   ; this%dyn_alb_wall_dif        (:,:) = nan
+  
+  if (Dynamic_UrbanAlbedoRoof) then 
+     call this%urbanalbtvroof_init(bounds)
+     call this%urbanalbtvroof_interp(bounds)
+     call hist_addfld2d (fname='DYNALB_ROOF_DIR', units='',      &
+            avgflag='A', long_name='time varing urban roof albedo dir',  type2d='numrad', &
+            ptr_lunit=this%dyn_alb_roof_dir, default='inactive', set_nourb=spval, &
+          l2g_scale_type='unity')
+     call hist_addfld2d (fname='DYNALB_ROOF_DIF', units='',      &
+            avgflag='A', long_name='time varing urban roof albedo dif',  type2d='numrad',  &
+            ptr_lunit=this%dyn_alb_roof_dif, default='inactive', set_nourb=spval, &
+          l2g_scale_type='unity')
+  end if
+  
+  if (Dynamic_UrbanAlbedoImproad) then    
+     call this%urbanalbtvimproad_init(bounds)
+     call this%urbanalbtvimproad_interp(bounds)
+     call hist_addfld2d (fname='DYNALB_IMPROAD_DIR', units='',      &
+            avgflag='A', long_name='time varing urban improad albedo dir',  type2d='numrad', &
+            ptr_lunit=this%dyn_alb_improad_dir, default='inactive', set_nourb=spval, &
+          l2g_scale_type='unity')
+     call hist_addfld2d (fname='DYNALB_IMPROAD_DIF', units='',      &
+            avgflag='A', long_name='time varing urban improad albedo dif',  type2d='numrad',  &
+            ptr_lunit=this%dyn_alb_improad_dif, default='inactive', set_nourb=spval, &
+          l2g_scale_type='unity')
+  end if
+  
+  if (Dynamic_UrbanAlbedoWall) then
+     call this%urbanalbtvwall_init(bounds)
+     call this%urbanalbtvwall_interp(bounds)
+     call hist_addfld2d (fname='DYNALB_WALL_DIR', units='',      &
+            avgflag='A', long_name='time varing urban wall albedo dir',  type2d='numrad', &
+            ptr_lunit=this%dyn_alb_wall_dir, default='inactive', set_nourb=spval, &
+          l2g_scale_type='unity')
+     call hist_addfld2d (fname='DYNALB_WALL_DIF', units='',      &
+            avgflag='A', long_name='time varing urban wall albedo dif',  type2d='numrad',  &
+            ptr_lunit=this%dyn_alb_wall_dif, default='inactive', set_nourb=spval, &
+          l2g_scale_type='unity')
+  end if   
+  
+ end subroutine dynAlbinit
 
  !---------------------------------------------------------------------
   
@@ -198,7 +235,7 @@ module UrbanDynAlbMod
         pio_iotype=shr_pio_getiotype(inst_name),       &
         mpicom=mpicom, compid=comp_id,                 &
         gsmap=gsmap_lnd_gdc2glo, ggrid=dom_clm,        &
-        nxg=ldomain%ni, nyg=ldomain%nj,                &
+        nxg=ldomain%ni, nyg=ldomain%nj,  &
         yearFirst=stream_year_first_urbanalbtvroof,        &
         yearLast=stream_year_last_urbanalbtvroof,          &
         yearAlign=model_year_align_urbanalbtvroof,         &
@@ -281,12 +318,16 @@ module UrbanDynAlbMod
              do g = bounds%begg, bounds%endg
                 ig = ig+1
                 if (g==glun) exit
-             end do            
-             this%dyn_alb_roof_dir(l) = this%sdat_urbanalbtvroof%avs(1)%rAttr(ip,ig)
-             this%dyn_alb_roof_dif(l) = this%sdat_urbanalbtvroof%avs(1)%rAttr(ip,ig)                   
+             end do   
+             do ib = 1,numrad         
+                this%dyn_alb_roof_dir(l,ib) = this%sdat_urbanalbtvroof%avs(1)%rAttr(ip,ig)
+                this%dyn_alb_roof_dif(l,ib) = this%sdat_urbanalbtvroof%avs(1)%rAttr(ip,ig)     
+             end do                 
        else
-             this%dyn_alb_roof_dir(l) = spval
-             this%dyn_alb_roof_dif(l) = spval     
+             do ib = 1,numrad
+                this%dyn_alb_roof_dir(l,ib) = spval
+                this%dyn_alb_roof_dif(l,ib) = spval  
+             end do      
        end if
     end do
     
@@ -302,13 +343,15 @@ module UrbanDynAlbMod
                 ig = ig+1
                 if (g == glun) exit
              end do
-
-             if ( .not. urban_valid(g) .or. (this%dyn_alb_roof_dir(l) <= 0._r8) .or. (this%dyn_alb_roof_dif(l) <= 0._r8)) then
-                found = .true.
-                gindx = g
-                lindx = l
-                exit
-             end if  
+             
+             do ib = 1,numrad
+                if ( .not. urban_valid(g) .or. (this%dyn_alb_roof_dir(l,ib) <= 0._r8) .or. (this%dyn_alb_roof_dif(l,ib) <= 0._r8)) then
+                   found = .true.
+                   gindx = g
+                   lindx = l
+                   exit
+                end if
+             end do     
        end if
     end do
     
@@ -316,8 +359,8 @@ module UrbanDynAlbMod
        write(iulog,*)'ERROR: no valid urban roof data for g= ',gindx
        write(iulog,*)'landunit type:   ',lun%itype(l)
        write(iulog,*)'urban_valid:     ',urban_valid(gindx)
-       write(iulog,*)'dyn_alb_roof_dir:  ',this%dyn_alb_roof_dir(lindx)
-       write(iulog,*)'dyn_alb_roof_dif:  ',this%dyn_alb_roof_dif(lindx)
+       write(iulog,*)'dyn_alb_roof_dir:  ',this%dyn_alb_roof_dir(lindx,:)
+       write(iulog,*)'dyn_alb_roof_dif:  ',this%dyn_alb_roof_dif(lindx,:)
        call endrun(msg=errmsg(sourcefile, __LINE__))
     end if
   end subroutine urbanalbtvroof_interp
@@ -516,12 +559,16 @@ module UrbanDynAlbMod
              do g = bounds%begg, bounds%endg
                 ig = ig+1
                 if (g==glun) exit
-             end do            
-             this%dyn_alb_improad_dir(l) = this%sdat_urbanalbtvimproad%avs(1)%rAttr(ip,ig)
-             this%dyn_alb_improad_dif(l) = this%sdat_urbanalbtvimproad%avs(1)%rAttr(ip,ig)                   
-       else
-             this%dyn_alb_improad_dir(l) = spval
-             this%dyn_alb_improad_dif(l) = spval     
+             end do    
+             do ib = 1,numrad        
+                this%dyn_alb_improad_dir(l,ib) = this%sdat_urbanalbtvimproad%avs(1)%rAttr(ip,ig)
+                this%dyn_alb_improad_dif(l,ib) = this%sdat_urbanalbtvimproad%avs(1)%rAttr(ip,ig) 
+             end do                     
+       else 
+             do ib = 1,numrad
+                this%dyn_alb_improad_dir(l,ib) = spval
+                this%dyn_alb_improad_dif(l,ib) = spval
+             end do        
        end if
     end do
     
@@ -537,13 +584,15 @@ module UrbanDynAlbMod
                 ig = ig+1
                 if (g == glun) exit
              end do
-
-             if ( .not. urban_valid(g) .or. (this%dyn_alb_improad_dir(l) <= 0._r8) .or. (this%dyn_alb_improad_dif(l) <= 0._r8)) then
-                found = .true.
-                gindx = g
-                lindx = l
-                exit
-             end if  
+             
+             do ib = 1,numrad
+                if ( .not. urban_valid(g) .or. (this%dyn_alb_improad_dir(l,ib) <= 0._r8) .or. (this%dyn_alb_improad_dif(l,ib) <= 0._r8)) then
+                   found = .true.
+                   gindx = g
+                   lindx = l
+                   exit
+                end if 
+            end do     
        end if
     end do
     
@@ -551,8 +600,8 @@ module UrbanDynAlbMod
        write(iulog,*)'ERROR: no valid urban improad data for g= ',gindx
        write(iulog,*)'landunit type:   ',lun%itype(l)
        write(iulog,*)'urban_valid:     ',urban_valid(gindx)
-       write(iulog,*)'dyn_alb_improad_dir:  ',this%dyn_alb_improad_dir(lindx)
-       write(iulog,*)'dyn_alb_improad_dif:  ',this%dyn_alb_improad_dif(lindx)
+       write(iulog,*)'dyn_alb_improad_dir:  ',this%dyn_alb_improad_dir(lindx,:)
+       write(iulog,*)'dyn_alb_improad_dif:  ',this%dyn_alb_improad_dif(lindx,:)
        call endrun(msg=errmsg(sourcefile, __LINE__))
     end if
   end subroutine urbanalbtvimproad_interp
@@ -668,7 +717,7 @@ module UrbanDynAlbMod
         pio_iotype=shr_pio_getiotype(inst_name),       &
         mpicom=mpicom, compid=comp_id,                 &
         gsmap=gsmap_lnd_gdc2glo, ggrid=dom_clm,        &
-        nxg=ldomain%ni, nyg=ldomain%nj,                &
+        nxg=ldomain%ni, nyg=ldomain%nj,         &
         yearFirst=stream_year_first_urbanalbtvwall,        &
         yearLast=stream_year_last_urbanalbtvwall,          &
         yearAlign=model_year_align_urbanalbtvwall,         &
@@ -750,12 +799,16 @@ module UrbanDynAlbMod
              do g = bounds%begg, bounds%endg
                 ig = ig+1
                 if (g==glun) exit
-             end do            
-             this%dyn_alb_wall_dir(l) = this%sdat_urbanalbtvwall%avs(1)%rAttr(ip,ig)
-             this%dyn_alb_wall_dif(l) = this%sdat_urbanalbtvwall%avs(1)%rAttr(ip,ig)                   
+             end do     
+             do ib = 1, numrad       
+                this%dyn_alb_wall_dir(l,ib) = this%sdat_urbanalbtvwall%avs(1)%rAttr(ip,ig)
+                this%dyn_alb_wall_dif(l,ib) = this%sdat_urbanalbtvwall%avs(1)%rAttr(ip,ig)           
+             end do           
        else
-             this%dyn_alb_wall_dir(l) = spval
-             this%dyn_alb_wall_dif(l) = spval     
+             do ib = 1,numrad
+                this%dyn_alb_wall_dir(l,ib) = spval
+                this%dyn_alb_wall_dif(l,ib) = spval    
+             end do    
        end if
     end do
     
@@ -771,13 +824,15 @@ module UrbanDynAlbMod
                 ig = ig+1
                 if (g == glun) exit
              end do
-
-             if ( .not. urban_valid(g) .or. (this%dyn_alb_wall_dir(l) <= 0._r8) .or. (this%dyn_alb_wall_dif(l) <= 0._r8)) then
-                found = .true.
-                gindx = g
-                lindx = l
-                exit
-             end if  
+             
+             do ib = 1,numrad
+                if ( .not. urban_valid(g) .or. (this%dyn_alb_wall_dir(l,ib) <= 0._r8) .or. (this%dyn_alb_wall_dif(l,ib) <= 0._r8)) then
+                   found = .true.
+                   gindx = g
+                   lindx = l
+                   exit
+                end if  
+             end do   
        end if
     end do
     
@@ -785,8 +840,8 @@ module UrbanDynAlbMod
        write(iulog,*)'ERROR: no valid urban wall data for g= ',gindx
        write(iulog,*)'landunit type:   ',lun%itype(l)
        write(iulog,*)'urban_valid:     ',urban_valid(gindx)
-       write(iulog,*)'dyn_alb_wall_dir:  ',this%dyn_alb_wall_dir(lindx)
-       write(iulog,*)'dyn_alb_wall_dif:  ',this%dyn_alb_wall_dif(lindx)
+       write(iulog,*)'dyn_alb_wall_dir:  ',this%dyn_alb_wall_dir(lindx,:)
+       write(iulog,*)'dyn_alb_wall_dif:  ',this%dyn_alb_wall_dif(lindx,:)
        call endrun(msg=errmsg(sourcefile, __LINE__))
     end if
   end subroutine urbanalbtvwall_interp
