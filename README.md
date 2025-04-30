@@ -4,11 +4,11 @@
 
 ## Introduction
 
-This repository is supplementary to the paper "Sun, Y., Fang, B., Oleson, K. W., Zhao, L., Topping, D. O., Schultz, D. M., & Zheng, Z. (2024). Improving Urban Climate Adaptation Modelling in the Community Earth System Model (CESM) Through Transient Urban Surface Albedo Representation. *Journal of Advances in Modeling Earth Systems*, 16(12), e2024MS004380. https://doi.org/10.1029/2024MS004380". 
+This repository is supplementary to the paper "Sun, Y., Fang, B., Oleson, K. W., Zhao, L., Topping, D. O., Schultz, D. M., & Zheng, Z. (2024). Improving Urban Climate Adaptation Modelling in the Community Earth System Model (CESM) Through Transient Urban Surface Albedo Representation. *Journal of Advances in Modeling Earth Systems*, 16(12), e2024MS004380. https://doi.org/10.1029/2024MS004380". A related dataset is open access at: [https://doi.org/10.48420/27867357](https://doi.org/10.48420/27867357).
 
 The objectives of this project are:
 
-- Modify CESM source code to realize transient urban albedo representation;
+- Modify the CESM source code to realize transient urban albedo representation;
 - Apply the new scheme for quantifying urban albedo cooling effects;
 - Use simulation results for urban climate adaptation.
 
@@ -91,6 +91,6 @@ The scripts listed below show supplementary information such as input data, atmo
 - The support of [Douglas Lowe](https://github.com/douglowe) and Christopher Grave from Research IT at The University of Manchester is gratefully acknowledged. 
 - [Zhonghua Zheng](https://github.com/zhonghua-zheng) appreciates the support provided by the academic start-up funds from the Department of Earth and Environmental Sciences at The University of Manchester.
 - [Yuan Sun](https://github.com/YuanSun-UoM) is supported by the PhD studentship of Zhonghua Zheng's academic start-up funds.
-- Contributions from [Keith W Oleson](https://staff.ucar.edu/users/oleson) are based upon work supported by the NSF National Center for Atmospheric Research, which is a major facility sponsored by the U.S. National Science Foundation under Cooperative Agreement No. 1852977.
+- Contributions from [Keith W. Oleson](https://staff.ucar.edu/users/oleson) are based upon work supported by the NSF National Center for Atmospheric Research, which is a major facility sponsored by the U.S. National Science Foundation under Cooperative Agreement No. 1852977.
 - Lei Zhao acknowledges the support of the U.S. National Science Foundation (CAREER award Grant 2145362).
 - The authors declare no conflict of interest.
