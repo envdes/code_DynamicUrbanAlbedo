@@ -59,6 +59,14 @@ The scripts listed below are used for processing simulation output and visualiza
 | 2.7  | [Building energy in latitude](./2_simulation_output_analysis/2.7_building_energy_latitude) | CNTL, ROOF_DA, IMPROAD_DA, WALL_DA, ROOF_IMPROAD_DA, ROOF_IMPROAD_WALL_DA | Use the 2040 outputs                                         | [Figure.ipynb](./2_simulation_output_analysis/2.7_building_energy_latitude/Figure.ipynb) |
 | 2.8  | [Building energy balance](./2_simulation_output_analysis/2.8_building_energy_balance) | CNTL, ROOF_DA, IMPROAD_DA, WALL_DA, ROOF_IMPROAD_DA, ROOF_IMPROAD_WALL_DA | Use [Export.ipynb](./2_simulation_output_analysis/2.8_building_energy_balance/Export.ipynb) to get *.csv from 2015 to 2099 | [Figure.ipynb](./2_simulation_output_analysis/2.8_building_energy_balance/Figure.ipynb) |
 
+- CNTL: control simulation using the default urban parameters.
+- ROOF_0.9: a simulation using a roof albedo of 0.9 globally.
+- ROOF_DA: a simulation using transient roof albedo representation (roof albedo increases by 0.01 monthly).
+- IMPROAD_DA: a simulation using transient impervious ground albedo representation (impervious ground albedo increases by 0.01 monthly).
+- WALL_DA: a simulation using transient wall albedo representation (wall albedo increases by 0.01 monthly).
+- ROOF_IMPROAD_DA: a simulation using transient albedo representation of roof and impervious ground (roof and impervious ground albedo increases by 0.01 monthly).
+- ROOF_IMPROAD_WALL_DA: a simulation using transient albedo representation of roof, impervious ground, and wall (roof, impervious ground, and wall albedo increases by 0.01 monthly).
+
 ### [3_illustration](./3_illutration)
 
 The figures listed below illustrate details of the transient urban albedo scheme in CLMU.
